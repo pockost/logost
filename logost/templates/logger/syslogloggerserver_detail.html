@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ object.name }}</h2>
+
+<dl>
+  <dd>Hostname</dd>
+  <dt>{{ object.hostname }}</dt>
+  <dd>Port</dd>
+  <dt>{{ object.port }}</dt>
+  <dd>Facility</dd>
+  <dt>{{ object.facility }}</dt>
+  <dd>Default log level</dd>
+  <dt>{{ object.default_log_level }}</dt>
+</dl>
+{% endblock %}
