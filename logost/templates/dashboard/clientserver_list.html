@@ -28,6 +28,8 @@
             </div>
           </div>
       </div>
+    {% empty %}
+      No client server. <a href="{% url "client-server-create" %}">Create a new one</a>
     {% endfor %}
     </div>
   </div>

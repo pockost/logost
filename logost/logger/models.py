@@ -13,7 +13,12 @@ class LoggerServer(PolymorphicModel):
     All logger type like syslog have to inherite from this class.
     For the instance we should have a class SyslogLoggerServer(LoggerServer)
     """
+    _type = ''
     name = models.CharField(max_length=255)
+
+    @property
+    def type(self):
+        return self._type
 
     def send_message(self, message, log_level=None):
         """
@@ -22,11 +27,15 @@ class LoggerServer(PolymorphicModel):
         raise NotImplementedError(
             'Send message should be override on LoggerServer child')
 
+    def __str__(self):
+        return self.name
+
 
 class SyslogLoggerServer(LoggerServer):
     """
     Syslog logger server
     """
+    _type = 'syslog'
     FACILITY_CHOICES = (
         (0, 'kern'),
         (1, 'user'),

@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class ClientServer(models.Model):
@@ -9,6 +10,17 @@ class ClientServer(models.Model):
         'logger.LoggerServer',
         through='LoggerServerStatus',
         related_name='client_servers')
+
+    def send_log(self, message):
+        """
+        Send a log to all active logger
+        """
+        for logger_server in self.logger_servers.filter(
+                client_status__enabled=True):
+            logger_server.send_message(message)
+
+    def get_absolute_url(self):
+        return reverse('client-server-detail', args=[self.pk])
 
 
 class LoggerServerStatus(models.Model):

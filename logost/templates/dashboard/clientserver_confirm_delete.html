@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm">
+    <h2>Delete {{ object.name }} ?</h2>
+
+    <p>Are you sure you want to delete "{{ object.name }}"?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-lg btn-block">Yes !</button>
+      <a href="{% url "client-server-detail" object.pk %}"><button type="button" class="btn btn-primary btn-lg btn-block">No, go back...</button></a>
+    </form>
+  </div>
+</div>
+{% endblock %}

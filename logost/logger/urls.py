@@ -15,4 +15,5 @@ urlpatterns = [
         'create',
         views.LoggerServerCreateView.as_view(),
         name='logger-server-create'),
+    path('', views.LoggerServerListView.as_view(), name='logger-server-list'),
 ]
