@@ -22,3 +22,6 @@ django-polymorphic==2.0.3
 
 # Design
 django-jet==1.0.8
+
+# generator
+exrex==0.10.5

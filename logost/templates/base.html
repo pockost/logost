@@ -46,6 +46,9 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logger-server-list' %}">Loggers</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'generator-list' %}">Generator</a>
+            </li>
             {% if request.user.is_authenticated %}
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}

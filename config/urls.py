@@ -21,6 +21,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("dashboard/", include("logost.dashboard.urls")),
     path("loggers/", include("logost.logger.urls")),
+    path("generator/", include("logost.generator.urls")),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
