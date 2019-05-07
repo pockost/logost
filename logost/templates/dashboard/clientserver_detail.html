@@ -12,6 +12,8 @@
       <dt>{{ object.hostname}}</dt>
       <dd>IP</dd>
       <dt>{{ object.ip}}</dt>
+      <dd>Last run</dd>
+      <dt>{{ object.last_run}}</dt>
     </dl>
   </div>
   <div class="col">
@@ -32,15 +34,17 @@
     		<tr>
       		<th scope="col">name</th>
       		<th scope="col">type</th>
+      		<th scope="col">status</th>
       		<th scope="col">actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for logger in object.logger_servers.all %}
+				{% for logger in object.logger_status.all %}
 				<tr>
-					<th scope="row">{{ logger.name }}</th>
-          <td>{{ logger.type }}</td>
-					<td><a href="{{ logger.get_absolute_url }}">Details</a></td>
+					<th scope="row">{{ logger.logger_server.name }}</th>
+          <td>{{ logger.logger_server.type }}</td>
+          <td>{{ logger.enabled|yesno:"Enabled,Disabled,Unkown" }}</td>
+					<td><a href="{{ logger.logger_server.get_absolute_url }}">Details</a></td>
 				</tr>
         {% empty %}
         <tr>
@@ -53,6 +57,37 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-sm">
+    <h2>Linked generator</h2>
+
+		<table class="table table-hover">
+  		<thead>
+    		<tr>
+      		<th scope="col">name</th>
+      		<th scope="col">type</th>
+      		<th scope="col">status</th>
+      		<th scope="col">actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for generator in object.generator_status.all %}
+				<tr>
+					<th scope="row">{{ generator.generator.name }}</th>
+          <td>{{ generator.generator.type }}</td>
+          <td>{{ generator.enabled|yesno:"Enabled,Disabled,Unkown" }}</td>
+					<td><a href="{{ generator.generator.get_absolute_url }}">Details</a></td>
+				</tr>
+        {% empty %}
+        <tr>
+          <th colspan="3">No linked logger server</th>
+        </tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+  </div>
+</div>
 
 
 

@@ -88,5 +88,5 @@ class ApacheHttpdGenerator(GrokGenerator):
         When saving we will trigger grok save in order to
         save the resulting regex. This is a performance tips
         """
-        self.grok = '%{IP4} - - \[%{DAY}/%{MONTH_SHORT}/%{YEAR}:%{HOUR}:%{MINUTE}:%{SECOND} %{ISO8601_TIMEZONE}\] "%{HTTP_VERB} /nOdDNb8z8rs %{HTTP_PROTO}" (200|404|403|500) \d{3,6}'
+        self.grok = '%{IP4} - - \[%{DAY}/%{MONTH_SHORT}/%{YEAR}:%{HOUR}:%{MINUTE}:%{SECOND} %{ISO8601_TIMEZONE}\] "%{HTTP_VERB} /(%{WORD}/)+ %{HTTP_PROTO}" (200|404|403|500) \d{3,6}'
         super(ApacheHttpdGenerator, self).save(*args, **kwargs)

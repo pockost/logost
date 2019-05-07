@@ -6,6 +6,8 @@ def register_grok(name, regex):
     GROK_PATTERN[name] = regex
 
 
+WORD = '[a-zA-Z0-9-]+'
+register_grok('WORD', WORD)
 USERNAME = '[a-zA-Z0-9._-]+'
 register_grok('USERNAME', USERNAME)
 USER = '%{USERNAME}'

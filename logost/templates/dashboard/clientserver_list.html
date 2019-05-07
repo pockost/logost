@@ -44,4 +44,37 @@
     </ul>
   </div>
 </div>
+
+
+<div class="row">
+  <div class="col-sm">
+    <h2>Client server list</h2>
+		<table class="table table-hover">
+  		<thead>
+    		<tr>
+      		<th scope="col">name</th>
+      		<th scope="col">Quick actions</th>
+      		<th scope="col">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+    {% for server in object_list %}
+				<tr>
+					<th scope="row">{{ server.name }}</th>
+					<td>
+              <div class="btn-group btn-group-sm" role="group" aria-label="Actions on {{ server.name }}">
+                <button type="button" class="btn btn-secondary"><i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn btn-secondary"><i class="fas fa-bomb"></i></button>
+                <button type="button" class="btn btn-secondary"><i class="fas fa-pause"></i></button>
+              </div>
+            </td>
+					<td><a href="{{ server.get_absolute_url }}">Details</a> <a href="#">Delete</a></td>
+        </tr>
+    {% empty %}
+      No client server. <a href="{% url "client-server-create" %}">Create a new one</a>
+    {% endfor %}
+			</tbody>
+		</table>
+  </div>
+</div>
 {% endblock %}

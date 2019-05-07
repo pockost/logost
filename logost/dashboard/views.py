@@ -45,7 +45,8 @@ class ClientServerSendLogView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.object.send_log("toto")
+        self.object.periodic_send_log()
+        self.object.send_log(request.POST['message'])
         messages.success(request, 'Log successfully placed to be send.')
         return HttpResponseRedirect(self.get_success_url())
 
