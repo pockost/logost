@@ -4,7 +4,7 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from .models import ApacheHttpdGenerator, Generator, GrokGenerator, RegexGenerator
+from .models import ApacheHttpdGenerator, Generator, GrokGenerator, RegexGenerator, VsftpdGenerator
 
 
 class GeneratorListView(ListView):
@@ -55,18 +55,41 @@ class GrokGeneratorDetailView(DetailView):
 class ApacheHttpdGeneratorUpdateView(UpdateView):
 
     model = ApacheHttpdGenerator
-    fields = ['name']
+    fields = [
+        'name', 'random_date', 'only_get_post_verb', 'custom_url',
+        'only_http_11'
+    ]
 
 
 class ApacheHttpdGeneatorCreateView(CreateView):
 
     model = ApacheHttpdGenerator
-    fields = ['name']
+    fields = [
+        'name', 'random_date', 'only_get_post_verb', 'custom_url',
+        'only_http_11'
+    ]
 
 
 class ApacheHttpdGeneratorDetailView(DetailView):
 
     model = ApacheHttpdGenerator
+
+
+class VsftpdGeneratorUpdateView(UpdateView):
+
+    model = VsftpdGenerator
+    fields = ['name', 'random_date', 'custom_url', 'custom_username']
+
+
+class VsftpdGeneatorCreateView(CreateView):
+
+    model = VsftpdGenerator
+    fields = ['name', 'random_date', 'custom_url', 'custom_username']
+
+
+class VsftpdGeneratorDetailView(DetailView):
+
+    model = VsftpdGenerator
 
 
 class GeneratorGenerateView(SingleObjectMixin, TemplateView):

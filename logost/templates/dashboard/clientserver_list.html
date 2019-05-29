@@ -4,51 +4,6 @@
 <div class="row">
   <div class="col-sm">
     <h2>Client server list</h2>
-    <div class="accordion" id="accordion-server-list">
-    {% for server in object_list %}
-      <div class="card">
-          <div class=card-header" id="heading-server-{{ server.pk }}">
-            <h2 class="mb-0">
-              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-server-{{ server.pk }}" aria-expanded="true" aria-controls="collapse-server-{{ server.pk }}">
-                {{ server.name }}
-              </button>
-              <div class="btn-group btn-group-sm" role="group" aria-label="Actions on {{ server.name }}">
-                <button type="button" class="btn btn-secondary"><i class="fas fa-paper-plane"></i></button>
-                <button type="button" class="btn btn-secondary"><i class="fas fa-bomb"></i></button>
-                <button type="button" class="btn btn-secondary"><i class="fas fa-pause"></i></button>
-              </div>
-            </h2>
-          </div>
-          <div id="collapse-server-{{ server.pk }}" class="collapse" aria-labelledby="heading-server-{{ server.pk }}" data-parent="#accordion-server-list">
-            <div class="card-body">
-              <ul>
-                <li>{{ server.hostname }}</li>
-                <li>{{ server.ip }}</li>
-              </ul>
-            </div>
-          </div>
-      </div>
-    {% empty %}
-      No client server. <a href="{% url "client-server-create" %}">Create a new one</a>
-    {% endfor %}
-    </div>
-  </div>
-  <div class="col-sm">
-    <h2>Logger servers</h2>
-    <ul>
-    {% for logger_server in server.logger_server %}
-      <li>{{ logger_server }}</li>
-    {% empty  %}
-      <li>No logger</li>
-    {% endfor %}
-    </ul>
-  </div>
-</div>
-
-
-<div class="row">
-  <div class="col-sm">
-    <h2>Client server list</h2>
 		<table class="table table-hover">
   		<thead>
     		<tr>
@@ -75,6 +30,13 @@
     {% endfor %}
 			</tbody>
 		</table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm">
+    <h2>Actions</h2>
+    <a href="{% url 'client-server-create' %}" class="btn btn-primary btn-lg btn-block">Create a new Client Server</a>
   </div>
 </div>
 {% endblock %}

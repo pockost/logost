@@ -8,12 +8,10 @@
     <dl>
       <dd>Name</dd>
       <dt>{{ object.name}}</dt>
-      <dd>Grok</dd>
-      <dt>{{ object.grok}}</dt>
     </dl>
   </div>
   <div class="col">
-      <a href="{% url "generator-grok-edit" object.pk %}" class="btn btn-primary btn-lg btn-block">Edit</a>
+      <a href="{% url "generator-vsftpd-edit" object.pk %}" class="btn btn-primary btn-lg btn-block">Edit</a>
       <a href="{% url "generator-delete" object.pk %}" class="btn btn-danger btn-lg btn-block"> Delete </a>
       <a href="{% url "generator-generate" object.pk %}" class="btn btn-success btn-lg btn-block">Generate sample</a>
   </div>
@@ -21,7 +19,7 @@
 
 <div class="row">
   <div class="col-sm">
-    <h2>Linked client server</h2>
+    <h2>Linked clients</h2>
 
 		<table class="table table-hover">
   		<thead>
@@ -32,8 +30,7 @@
 				</tr>
 			</thead>
 			<tbody>
-        {{ object }}
-				{% for logger in object.client_servers.all %}
+				{% for logger in object.logger_servers.all %}
 				<tr>
 					<th scope="row">{{ logger.name }}</th>
           <td>{{ logger.type }}</td>

@@ -140,7 +140,6 @@ class SyslogLoggerServer(RawLoggerServer):
         level = log_level + self.facility * 8
         timestamp = datetime.datetime.now(pytz.utc).isoformat()
 
-        import codecs
         return "<{level}>{version}{sp}{timestamp}{sp}{hostname}{sp}{app_name}{sp}{procid}{sp}{msgid}{sp}{data}{sp}{message}".format(
             level=level,
             version=1,

@@ -28,6 +28,8 @@ MONTH_SHORT = '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)'
 register_grok('MONTH_SHORT', MONTH_SHORT)
 DAY = '(0[1-9]|[12][0-9]|3[01])'
 register_grok('DAY', DAY)
+DAY_SHORT = '(Mon|Tue|Wed|Thu|Fri|Sat|Sun)'
+register_grok('DAY_SHORT', DAY_SHORT)
 HOUR = '(0[1-9]|[1][0-9]|2[03])'
 register_grok('HOUR', HOUR)
 MINUTE = '[0-5]\d'

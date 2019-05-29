@@ -40,6 +40,18 @@ urlpatterns = [
         views.ApacheHttpdGeneratorUpdateView.as_view(),
         name='generator-httpd-edit'),
     path(
+        'vsftpd/create',
+        views.VsftpdGeneatorCreateView.as_view(),
+        name='generator-vsftpd-create'),
+    path(
+        'vsftpd/<int:pk>',
+        views.VsftpdGeneratorDetailView.as_view(),
+        name='generator-vsftpd-detail'),
+    path(
+        'vsftpd/edit/<int:pk>',
+        views.VsftpdGeneratorUpdateView.as_view(),
+        name='generator-vsftpd-edit'),
+    path(
         'delete/<int:pk>',
         views.GeneratorDeleteView.as_view(),
         name='generator-delete'),
