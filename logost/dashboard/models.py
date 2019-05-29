@@ -26,7 +26,13 @@ class ClientServer(models.Model):
         """
         for generator in self.generators.filter(client_status__enabled=True):
             message = generator.generate()
-            self.send_log(message)
+            # If message is a list all should be send in setted order
+            # This can be usefull for the instance for ssh generator
+            if message is list:
+                for m in message:
+                    self.send_log(m)
+            else:
+                self.send_log(message)
         self.last_run = timezone.now()
         self.save()
 

@@ -52,6 +52,18 @@ urlpatterns = [
         views.VsftpdGeneratorUpdateView.as_view(),
         name='generator-vsftpd-edit'),
     path(
+        'sshd/create',
+        views.SshdGeneatorCreateView.as_view(),
+        name='generator-sshd-create'),
+    path(
+        'sshd/<int:pk>',
+        views.SshdGeneratorDetailView.as_view(),
+        name='generator-sshd-detail'),
+    path(
+        'sshd/edit/<int:pk>',
+        views.SshdGeneratorUpdateView.as_view(),
+        name='generator-sshd-edit'),
+    path(
         'delete/<int:pk>',
         views.GeneratorDeleteView.as_view(),
         name='generator-delete'),

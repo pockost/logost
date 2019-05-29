@@ -4,7 +4,7 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from .models import ApacheHttpdGenerator, Generator, GrokGenerator, RegexGenerator, VsftpdGenerator
+from .models import ApacheHttpdGenerator, Generator, GrokGenerator, RegexGenerator, SshdGenerator, VsftpdGenerator
 
 
 class GeneratorListView(ListView):
@@ -92,6 +92,23 @@ class VsftpdGeneratorDetailView(DetailView):
     model = VsftpdGenerator
 
 
+class SshdGeneratorUpdateView(UpdateView):
+
+    model = SshdGenerator
+    fields = ['name']
+
+
+class SshdGeneatorCreateView(CreateView):
+
+    model = SshdGenerator
+    fields = ['name']
+
+
+class SshdGeneratorDetailView(DetailView):
+
+    model = SshdGenerator
+
+
 class GeneratorGenerateView(SingleObjectMixin, TemplateView):
     template_name = 'generator/generator_generate.html'
     model = Generator
@@ -103,5 +120,12 @@ class GeneratorGenerateView(SingleObjectMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['generated_log'] = self.object.generate()
+
+        logs = self.object.generate()
+
+        # We should return a list
+        if isinstance(logs, str):
+            logs = [logs]
+        context['generated_log'] = logs
+
         return context

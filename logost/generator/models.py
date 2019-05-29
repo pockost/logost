@@ -1,4 +1,5 @@
 import datetime
+import random
 import re
 
 import exrex
@@ -7,10 +8,8 @@ from django.db import models
 from django.urls import reverse
 from polymorphic.models import PolymorphicModel
 
+from . import grok
 from .utils import convert_grok_to_regex
-
-IP_REGEX = '\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
-APACHE_START = '\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b - - \[(0[1-9]|[12][0-9]|3[01])/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/(19|20)\d\d:(0[1-9]|[1][0-9]|2[03]):[0-5]\d:[0-5]\d \+0[0-9]00\]'
 
 
 class Generator(PolymorphicModel):
@@ -281,3 +280,154 @@ class VsftpdGenerator(GrokGenerator):
 
         self.grok = grok
         super(VsftpdGenerator, self).save(*args, **kwargs)
+
+
+class SshdGenerator(GrokGenerator):
+    """
+    An sshd log generator
+
+    This generator will produce log like that
+
+    For error
+    May 29 13:22:36 server1 sshd[446]: Invalid user tajiki from 137.74.129.189 port 48102
+    May 29 13:22:36 server1 sshd[446]: input_userauth_request: invalid user tajiki [preauth]
+    May 29 13:22:36 server1 sshd[446]: pam_unix(sshd:auth): check pass; user unknown
+    May 29 13:22:36 server1 sshd[446]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=137.74.129.189
+    May 29 13:22:38 server1 sshd[446]: Failed password for invalid user tajiki from 137.74.129.189 port 48102 ssh2
+    May 29 13:22:38 server1 sshd[446]: Received disconnect from 137.74.129.189 port 48102:11: Bye Bye [preauth]
+    May 29 13:22:38 server1 sshd[446]: Disconnected from 137.74.129.189 port 48102 [preauth]
+
+    For correct connection
+    May 29 13:30:08 server1 sshd[3850]: Accepted publickey for myuser from XXX.XXX.XXX.XXX port 36746ssh2: RSA SHA256:XXXXXXXXXXXXXXXXXXXXX
+    May 29 13:30:08 server1 sshd[3850]: pam_unix(sshd:session): session opened for user myuser by (uid=0)
+    May 29 13:35:24 pockost-docker0 sshd[6232]: Received disconnect from XXX.XXX.XXX.XXX port 37566:11: disconnected by user
+    May 29 13:35:24 pockost-docker0 sshd[6232]: Disconnected from XXX.XXX.XXX.XXX port 37566
+    May 29 13:35:24 pockost-docker0 sshd[6226]: pam_unix(sshd:session): session closed for user myuser
+    """
+
+    _type = 'sshd'
+    _date_grok = '%{MONTH_SHORT} %{DAY} %{HOUR}:%{MINUTE}:%{SECOND}'
+
+    # TODO
+    # username_list
+    # source ip list
+    # Only error
+
+    def generate(self):
+        """
+        Generate many log
+        """
+        # Get a random IP address for remote host
+        ip = exrex.getone(convert_grok_to_regex(grok.IP4))
+        # Get a random username for connexion
+        username = exrex.getone(convert_grok_to_regex(grok.USERNAME))
+        # Get a random port
+        port = exrex.getone(convert_grok_to_regex(grok.PORT))
+        # Get a random date
+        date = exrex.getone(convert_grok_to_regex(self._date_grok))
+        # Get a pid
+        pid = exrex.getone(convert_grok_to_regex(grok.PORT))
+        # get server hostname
+        hostname = 'server1'
+
+        is_error = bool(random.getrandbits(1))
+
+        if is_error:
+            return self.generate_error(ip, username, port, date, pid, hostname)
+        return self.generate_success(ip, username, port, date, pid, hostname)
+
+    def generate_error(self, ip, username, port, date, pid, hostname):
+        """
+        Generate an ordered list of grok for ssh errored login
+        """
+        logs = list()
+
+        # May 29 13:22:36 server1 sshd[446]: Invalid user tajiki from 137.74.129.189 port 48102
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Invalid user {username} from {ip} port {port}'
+            .format(
+                date=date,
+                hostname=hostname,
+                pid=pid,
+                username=username,
+                ip=ip,
+                port=port))
+
+        #  May 29 13:22:36 server1 sshd[446]: input_userauth_request: invalid user tajiki [preauth]
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: input_userauth_request: invalid user {username} [preauth]'
+            .format(date=date, hostname=hostname, username=username, pid=pid))
+
+        # May 29 13:22:36 server1 sshd[446]: pam_unix(sshd:auth): check pass; user unknown
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: pam_unix(sshd:auth): check pass; user unknown'
+            .format(date=date, hostname=hostname, pid=pid))
+
+        # May 29 13:22:36 server1 sshd[446]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=137.74.129.189
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost={ip}'
+            .format(date=date, hostname=hostname, pid=pid, ip=ip))
+
+        # May 29 13:22:38 server1 sshd[446]: Failed password for invalid user tajiki from 137.74.129.189 port 48102 ssh2
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Failed password for invalid user {username} from {ip} port {port} ssh2'
+            .format(
+                date=date,
+                hostname=hostname,
+                pid=pid,
+                username=username,
+                port=port,
+                ip=ip))
+
+        # May 29 13:22:38 server1 sshd[446]: Received disconnect from 137.74.129.189 port 48102:11: Bye Bye [preauth]
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Received disconnect from {ip} port {port}:11: Bye Bye [preauth]'
+            .format(date=date, hostname=hostname, pid=pid, port=port, ip=ip))
+
+        # May 29 13:22:38 server1 sshd[446]: Disconnected from 137.74.129.189 port 48102 [preauth]
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Disconnected from {ip} port {port} [preauth]'
+            .format(date=date, hostname=hostname, pid=pid, port=port, ip=ip))
+
+        return logs
+
+    def generate_success(self, ip, username, port, date, pid, hostname):
+        """
+        Generate an ordered list of grok for succesfull ssh login
+        """
+        logs = list()
+        rsa = exrex.getone('[0-9a-zA-Z+=]{40,50}')
+
+        # May 29 13:30:08 server1 sshd[3850]: Accepted publickey for myuser from XXX.XXX.XXX.XXX port 36746 ssh2: RSA SHA256:XXXXX
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Accepted publickey for {username} from {ip} port {port} ssh2: RSA SHA256:{rsa}'
+            .format(
+                date=date,
+                hostname=hostname,
+                pid=pid,
+                port=port,
+                ip=ip,
+                rsa=rsa,
+                username=username))
+
+        # May 29 13:30:08 server1 sshd[3850]: pam_unix(sshd:session): session opened for user myuser by (uid=0)
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: pam_unix(sshd:session): session opened for user {username} by (uid=0)'
+            .format(date=date, hostname=hostname, pid=pid, username=username))
+
+        # May 29 13:35:24 pockost-docker0 sshd[6232]: Received disconnect from XXX.XXX.XXX.XXX port 37566:11: disconnected by user
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Received disconnect from {ip} port {port}:11: disconnected by user'
+            .format(date=date, hostname=hostname, pid=pid, ip=ip, port=port))
+
+        # May 29 13:35:24 pockost-docker0 sshd[6232]: Disconnected from XXX.XXX.XXX.XXX port 37566
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: Disconnected from {ip} port {port}'
+            .format(date=date, hostname=hostname, pid=pid, ip=ip, port=port))
+
+        # May 29 13:35:24 pockost-docker0 sshd[6226]: pam_unix(sshd:session): session closed for user myuser
+        logs.append(
+            '{date} {hostname} sshd[{pid}]: pam_unix(sshd:session): session closed for user {username}'
+            .format(date=date, hostname=hostname, pid=pid, username=username))
+
+        return logs

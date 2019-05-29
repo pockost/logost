@@ -3,7 +3,9 @@
 {% block content %}
 <div class="row">
   <div class="col">
-    {{ object.generate}}
+    {% for log in generated_log %}
+      {{ log }}<br/>
+    {% endfor %}
   </div>
 </div>
 
