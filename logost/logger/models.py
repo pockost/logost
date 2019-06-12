@@ -69,7 +69,7 @@ class RawLoggerServer(LoggerServer):
         (re)Open TCP connection
         """
         if self.protocol == flags.TCP:
-            self._connection.cOTOnect((self.hostname, self.port))
+            self._connection.connect((self.hostname, self.port))
 
     def send_message(self, message, sender):
         """
