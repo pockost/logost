@@ -563,6 +563,15 @@ function install_logost() {
     git pull origin master
   fi
 
+  verbose_print "Configure external IP"
+  GUESS_IP=$( ip a s |grep inet|grep -v inet6|grep -v 172.1|grep -v 127.0.0.1|grep -v '10.0.2.15'|awk '{ print $2 }'|cut -d'/' -f1)
+	pretty_print "What is your external IP ? [$GUESS_IP]" $fg_blue true
+  if [[ -z ${assume_yes-} ]]; then
+    read IP
+  fi
+  IP=${IP:-${GUESS_IP}}
+  grep -q "^EXTERNAL_IP=" .env/.local/.django && sed "s/^EXTERNAL_IP=.*/EXTERNAL_IP=${IP}/" -i .env/.local/.django || sed "$ a\EXTERNAL_IP=${IP}" -i .env/.local/.django
+
   pretty_print "Download docker image"
   docker-compose -f local.yml pull
 
@@ -582,7 +591,6 @@ function install_logost() {
 function display_info() {
   pretty_print "Connection information are :"
   pretty_print ""
-  GUESS_IP=$( ip a s |grep inet|grep -v inet6|grep -v 172.1|grep -v 127.0.0.1|grep -v '10.0.2.15'|awk '{ print $2 }'|cut -d'/' -f1)
   pretty_print "External IP(s) : $IP" $fg_blue
   pretty_print "Web access : http://${IP}:3000/" $fg_blue
 
