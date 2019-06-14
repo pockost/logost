@@ -28,7 +28,7 @@ class ClientServer(models.Model):
             message = generator.generate()
             # If message is a list all should be send in setted order
             # This can be usefull for the instance for ssh generator
-            if message is list:
+            if type(message) == list:
                 for m in message:
                     self.send_log(m)
             else:
