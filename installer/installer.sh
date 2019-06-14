@@ -570,10 +570,10 @@ function install_logost() {
     read IP
   fi
   IP=${IP:-${GUESS_IP}}
-  grep -q "^EXTERNAL_IP=" .env/.local/.django && sed "s/^EXTERNAL_IP=.*/EXTERNAL_IP=${IP}/" -i .env/.local/.django || sed "$ a\EXTERNAL_IP=${IP}" -i .env/.local/.django
+  grep -q "^EXTERNAL_IP=" .envs/.local/.django && sed "s/^EXTERNAL_IP=.*/EXTERNAL_IP=${IP}/" -i .envs/.local/.django || sed "$ a\EXTERNAL_IP=${IP}" -i .envs/.local/.django
 
   pretty_print "Download docker image"
-  docker-compose -f local.yml pull
+  docker-compose -f local.yml pull redis mailhog
 
   if [ "$UPDATE" == "yes" ] ; then
     pretty_print "Rebuild image"
