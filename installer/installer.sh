@@ -459,7 +459,7 @@ function welcome() {
   pretty_print " - Install and configure logost"
   pretty_print ""
 
-  pretty_print "Are you sure ? [N/y]" $fg_blue true
+  pretty_print "Are you sure ? [N/y]" "$fg_blue" true
   if [[ -z ${assume_yes-} ]]; then
     read PROCEED
   else
@@ -482,7 +482,7 @@ function install_docker() {
 
   echo
   if [ "${OS_DISTRO}" != "Debian" ] ; then
-    pretty_print "This script only work on debian" $fg_red
+    pretty_print "This script only work on debian" "$fg_red"
     script_exit "Exiting ..." 2
   fi
 
@@ -508,9 +508,9 @@ function install_docker() {
   run_as_root apt-get install ${APT_YES_OPTION} docker-ce docker-ce-cli containerd.io
 
   verbose_print "Add current user in docker group"
-  run_as_root adduser -quiet $USER docker
+  run_as_root adduser -quiet "$USER" docker
 
-  pretty_print "Docker installation completed" $fg_magenta
+  pretty_print "Docker installation completed" "$fg_magenta"
 
   pretty_print "Start docker-compose installation"
 
@@ -520,7 +520,7 @@ function install_docker() {
   verbose_print "Chmod docker compose"
   run_as_root chmod +x /usr/local/bin/docker-compose
 
-  pretty_print "docker-compose installation completed" $fg_magenta
+  pretty_print "docker-compose installation completed" "$fg_magenta"
 }
 
 
@@ -533,16 +533,16 @@ function install_git() {
   verbose_print "Install prerequisite"
   run_as_root apt-get install ${APT_YES_OPTION} git
 
-  pretty_print "git installation completed" $fg_magenta
+  pretty_print "git installation completed" "$fg_magenta"
 }
 
 function install_logost() {
-  pretty_print "Start git installation"
+  pretty_print "Start logost installation"
 
-	verbose_print "Create project directory"
-  if [ -e $HOME/docker/logost ]
+  verbose_print "Create project directory"
+  if [ -e "$HOME"/docker/logost ]
   then
-    pretty_print "Logost project already exist, update ? [N/y]" $fg_blue true
+    pretty_print "Logost project already exist, update ? [N/y]" "$fg_blue" true
     if [[ -z ${assume_yes-} ]]; then
       read UPDATE
     else
@@ -553,10 +553,10 @@ function install_logost() {
       * ) UPDATE=no ;;
     esac
   else
-    git clone https://github.com/pockost/logost.git $HOME/project/logost
+    git clone https://github.com/pockost/logost.git "$HOME"/project/logost
   fi
 
-  pushd $HOME/project/logost
+  pushd "$HOME"/project/logost
 
   if [ "$UPDATE" == "yes" ] ; then
     pretty_print "Update logost"
@@ -565,7 +565,7 @@ function install_logost() {
 
   verbose_print "Configure external IP"
   GUESS_IP=$( ip a s |grep inet|grep -v inet6|grep -v 172.1|grep -v 127.0.0.1|grep -v '10.0.2.15'|awk '{ print $2 }'|cut -d'/' -f1)
-	pretty_print "What is your external IP ? [$GUESS_IP]" $fg_blue true
+	pretty_print "What is your external IP ? [$GUESS_IP]" "$fg_blue" true
   if [[ -z ${assume_yes-} ]]; then
     read IP
   fi
@@ -585,14 +585,14 @@ function install_logost() {
   pretty_print "Wait for logost to start..."
   sleep 20
 
-  pretty_print "logost installation completed" $fg_magenta
+  pretty_print "logost installation completed" "${fg_magenta}"
 }
 
 function display_info() {
   pretty_print "Connection information are :"
   pretty_print ""
-  pretty_print "External IP(s) : $IP" $fg_blue
-  pretty_print "Web access : http://${IP}:3000/" $fg_blue
+  pretty_print "External IP(s) : ${IP}" "${fg_blue}"
+  pretty_print "Web access : http://${IP}:3000/" "${fg_blue}"
 
 }
 
